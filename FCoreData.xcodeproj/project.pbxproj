@@ -13,6 +13,9 @@
 		D3FA2A612213D12700E4B66C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3FA2A602213D12700E4B66C /* Assets.xcassets */; };
 		D3FA2A642213D12700E4B66C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D3FA2A622213D12700E4B66C /* LaunchScreen.storyboard */; };
 		D3FA2A6F2213D12700E4B66C /* FCoreDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A6E2213D12700E4B66C /* FCoreDataTests.swift */; };
+		D3FA2A7D2213D15800E4B66C /* FCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A7C2213D15800E4B66C /* FCoreDataManager.swift */; };
+		D3FA2A7F2213E13C00E4B66C /* FCDEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A7E2213E13C00E4B66C /* FCDEntity.swift */; };
+		D3FA2A812213E15900E4B66C /* FCoreDataWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A802213E15900E4B66C /* FCoreDataWrapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,9 @@
 		D3FA2A6A2213D12700E4B66C /* FCoreDataTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FCoreDataTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FA2A6E2213D12700E4B66C /* FCoreDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCoreDataTests.swift; sourceTree = "<group>"; };
 		D3FA2A702213D12700E4B66C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D3FA2A7C2213D15800E4B66C /* FCoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FCoreDataManager.swift; sourceTree = "<group>"; };
+		D3FA2A7E2213E13C00E4B66C /* FCDEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCDEntity.swift; sourceTree = "<group>"; };
+		D3FA2A802213E15900E4B66C /* FCoreDataWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCoreDataWrapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +83,7 @@
 		D3FA2A582213D12600E4B66C /* FCoreData */ = {
 			isa = PBXGroup;
 			children = (
+				D3FA2A7B2213D15800E4B66C /* coredata */,
 				D3FA2A592213D12600E4B66C /* AppDelegate.swift */,
 				D3FA2A5B2213D12600E4B66C /* ViewController.swift */,
 				D3FA2A5D2213D12600E4B66C /* Main.storyboard */,
@@ -94,6 +101,16 @@
 				D3FA2A702213D12700E4B66C /* Info.plist */,
 			);
 			path = FCoreDataTests;
+			sourceTree = "<group>";
+		};
+		D3FA2A7B2213D15800E4B66C /* coredata */ = {
+			isa = PBXGroup;
+			children = (
+				D3FA2A7C2213D15800E4B66C /* FCoreDataManager.swift */,
+				D3FA2A802213E15900E4B66C /* FCoreDataWrapper.swift */,
+				D3FA2A7E2213E13C00E4B66C /* FCDEntity.swift */,
+			);
+			path = coredata;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,8 +214,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3FA2A812213E15900E4B66C /* FCoreDataWrapper.swift in Sources */,
 				D3FA2A5C2213D12600E4B66C /* ViewController.swift in Sources */,
 				D3FA2A5A2213D12600E4B66C /* AppDelegate.swift in Sources */,
+				D3FA2A7F2213E13C00E4B66C /* FCDEntity.swift in Sources */,
+				D3FA2A7D2213D15800E4B66C /* FCoreDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
