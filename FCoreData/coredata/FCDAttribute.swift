@@ -50,9 +50,17 @@ public enum FCDAttributeType {
         case .objectID:
             return .objectIDAttributeType
         case .uuid:
-            return .UUIDAttributeType
+            if #available(iOS 11.0, *) {
+                return .UUIDAttributeType
+            } else {
+                return .undefinedAttributeType
+            }
         case .uri:
-            return .URIAttributeType
+            if #available(iOS 11.0, *) {
+                return .URIAttributeType
+            } else {
+                return .undefinedAttributeType
+            }
         }
     }
 }
