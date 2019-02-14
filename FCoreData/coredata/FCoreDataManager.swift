@@ -9,6 +9,10 @@
 import UIKit
 import CoreData
 
+public enum FCoreDataMigrationType {
+    case restore
+}
+
 final public class FCoreDataManager {
     // MARK: - Initialization
     private let modelName: String

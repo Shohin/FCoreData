@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D39D94282215AFF700EA75F1 /* FCDAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39D94272215AFF700EA75F1 /* FCDAttribute.swift */; };
+		D39D942A2215B04400EA75F1 /* PropertyScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39D94292215B04400EA75F1 /* PropertyScope.swift */; };
 		D3FA2A5A2213D12600E4B66C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A592213D12600E4B66C /* AppDelegate.swift */; };
 		D3FA2A5C2213D12600E4B66C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A5B2213D12600E4B66C /* ViewController.swift */; };
 		D3FA2A5F2213D12600E4B66C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D3FA2A5D2213D12600E4B66C /* Main.storyboard */; };
@@ -29,6 +31,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D39D94272215AFF700EA75F1 /* FCDAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCDAttribute.swift; sourceTree = "<group>"; };
+		D39D94292215B04400EA75F1 /* PropertyScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyScope.swift; sourceTree = "<group>"; };
 		D3FA2A562213D12600E4B66C /* FCoreData.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FCoreData.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FA2A592213D12600E4B66C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D3FA2A5B2213D12600E4B66C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -106,8 +110,10 @@
 		D3FA2A7B2213D15800E4B66C /* coredata */ = {
 			isa = PBXGroup;
 			children = (
-				D3FA2A7C2213D15800E4B66C /* FCoreDataManager.swift */,
+				D39D94292215B04400EA75F1 /* PropertyScope.swift */,
 				D3FA2A802213E15900E4B66C /* FCoreDataWrapper.swift */,
+				D3FA2A7C2213D15800E4B66C /* FCoreDataManager.swift */,
+				D39D94272215AFF700EA75F1 /* FCDAttribute.swift */,
 				D3FA2A7E2213E13C00E4B66C /* FCDEntity.swift */,
 			);
 			path = coredata;
@@ -214,6 +220,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D39D942A2215B04400EA75F1 /* PropertyScope.swift in Sources */,
+				D39D94282215AFF700EA75F1 /* FCDAttribute.swift in Sources */,
 				D3FA2A812213E15900E4B66C /* FCoreDataWrapper.swift in Sources */,
 				D3FA2A5C2213D12600E4B66C /* ViewController.swift in Sources */,
 				D3FA2A5A2213D12600E4B66C /* AppDelegate.swift in Sources */,

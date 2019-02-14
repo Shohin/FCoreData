@@ -9,5 +9,6 @@
 import CoreData
 
 public typealias FManagedObjectContext = NSManagedObjectContext
+public typealias FManagedObjectID = NSManagedObjectID
 public typealias FManagedObject = NSManagedObject
 public typealias FManagedObjectModel = NSManagedObjectModel

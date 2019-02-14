@@ -9,23 +9,33 @@
 import UIKit
 import CoreData
 
-struct Test {
+final class Test {
     let id: Int
     let name: String
     let attr: String?
+    init(id: Int,
+         name: String,
+         attr: String?) {
+        self.id = id
+        self.name = name
+        self.attr = attr
+    }
 }
 
 extension Test: FCDEntity {
+    static let managedObjectIDScope: PropertyScope<FManagedObjectID> = PropertyScope<FManagedObjectID>()
+    
     enum AttrsNames: String {
         case id = "id", name = "name", attr = "attr"
         var value: String {
             return self.rawValue
         }
     }
-    init(managedObject: FManagedObject) {
+    convenience init(managedObject: FManagedObject) {
         self.init(id: (managedObject.value(forKey: AttrsNames.id.value) as? Int ?? -1),
                   name: (managedObject.value(forKey: AttrsNames.name.value) as? String ?? ""),
                   attr: managedObject.value(forKey: AttrsNames.attr.value) as? String)
+        print("OBJID: \(managedObject.objectID)")
     }
     
     var attrValuesByName: Dictionary<String, Any?> {
@@ -54,9 +64,10 @@ class ViewController: UIViewController {
         guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: moc) else {
             fatalError("Do not find \(entityName) entity")
         }
-        //        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         
         let mo = NSManagedObject(entity: entity, insertInto: moc)
+        print("Insert ID: \(mo.objectID)")
         mo.setValue(1, forKey: "id")
         mo.setValue("Test name", forKey: "name")
         mo.setValue("Test attr", forKey: "attr")
@@ -65,26 +76,43 @@ class ViewController: UIViewController {
         } catch let error as NSError  {
             print("[ERROR] Could not save \(error), \(error.userInfo)")
         }
-        
-        print("props")
-        print(entity.properties)
-        print("props by name")
-        print(entity.propertiesByName)
-        print("attrs by name")
-        print(entity.attributesByName)
-        
+    
         let items = Test.all(context: moc)
         print(Test.entityName)
         for item in items {
-            print(item)
+            print("id: \(item.id), name: \(item.name), attr: \(item.attr ?? "Def attr")")
+            print("MOID: \(item.managedObjectID)")
         }
         
-        for (key, value) in Test(id: -1, name: "", attr: nil).attrValuesByName {
-            guard let v = value else {
-                continue
-            }
-            print(type(of: v))
+        let t = Test(id: 2, name: "TestName", attr: "Attr2")
+        t.managedObjectID = mo.objectID
+        t.delete(context: moc)
+        
+        items.first?.bacthUpdate(context: moc, updateObject: t, predicate: nil, isReflectChanges: true)
+        
+        let mo1 = NSManagedObject(entity: entity, insertInto: moc)
+        print("Insert ID: \(mo1.objectID)")
+        mo1.setValue(10, forKey: "id")
+        mo1.setValue("Test name1", forKey: "name")
+        mo1.setValue("Test attr1", forKey: "attr")
+        do {
+            try moc.save()
+        } catch let error as NSError  {
+            print("[ERROR] Could not save \(error), \(error.userInfo)")
         }
+        
+        let t1 = Test(id: 10, name: "Test name1", attr: "Test attr1")
+        t1.managedObjectID = mo1.objectID
+        t1.save(context: moc)
+        
+        let items1 = Test.all(context: moc)
+        for item in items1 {
+            print("id: \(item.id), name: \(item.name), attr: \(item.attr ?? "Def attr")")
+            print("MOID: \(item.managedObjectID)")
+        }
+        
+        let t2 = Test(id: 11, name: "Test inser", attr: "Test inser attr")
+        t2.insert(context: moc)
     }
 
 
