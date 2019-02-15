@@ -42,6 +42,17 @@ public extension FCDEntity {
         self.managedObjectIDScope.remove(by: obj as AnyObject)
     }
     
+    @discardableResult
+    private static func _save(context: FManagedObjectContext) -> Bool {
+        do {
+            try context.save()
+            return true
+        } catch let error as NSError  {
+            print("[ERROR] Could not save \(error), \(error.userInfo)")
+        }
+        return false
+    }
+    
     public static var entityName: String {
         return String(describing: self)
     }
@@ -56,11 +67,7 @@ public extension FCDEntity {
             }
             mo.setValue(value, forKey: key)
         }
-        do {
-            try context.save()
-        } catch let error as NSError  {
-            print("[ERROR] Could not save \(error), \(error.userInfo)")
-        }
+        Self._save(context: context)
     }
     
     //Referential Integrity: Referential integrity will not be maintained between related objects. As an example, setting an employee’s department will not in turn update the array of employees on the department object. In light of this, its typically best to avoid using a batch update request on properties that reference other NSManagedObjects.
@@ -95,6 +102,7 @@ public extension FCDEntity {
     }
     
     //removed if exists and updated, else inserted
+    //it worked correct when managedObjectID is not null
     public func save(context: FManagedObjectContext) {
         if let _ = self.managedObjectID {
             self.delete(context: context)
@@ -104,29 +112,26 @@ public extension FCDEntity {
     
     //without managedObjectID crashed
     public func delete(context: FManagedObjectContext) {
-        let name = Self.entityName
         guard let moID = self.managedObjectID else {
             fatalError("Object not found for deleting!")
         }
         let mo = context.object(with: moID)
         context.delete(mo)
-        do {
-            try context.save()
+        if Self._save(context: context) {
             Self.removeMOID(obj: self)
-        } catch {
-            print("[ERROR] Could not save \(error)")
-            fatalError("Error on saving \(name). Reason: \(error)")
         }
     }
     
-    public static func delete(context: FManagedObjectContext, items: Array<Self>) {
+    public static func delete(context: FManagedObjectContext,
+                              items: Array<Self>) {
         for item in items {
             item.delete(context: context)
         }
     }
     
     /// If predicate is nil remove all datas
-    public static func delete(context: FManagedObjectContext, predicate: NSPredicate?) {
+    public static func delete(context: FManagedObjectContext,
+                              predicate: NSPredicate?) {
         let name = self.entityName
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: name)
         fetchRequest.predicate = predicate
@@ -140,19 +145,36 @@ public extension FCDEntity {
                 context.delete(mo)
             }
             
-            do {
-                try context.save()
+            if Self._save(context: context) {
                 //TODO: Must remove managed object ids to.
-            } catch {
-                print("[ERROR] Could not save \(error)")
-                fatalError("Error on saving \(name). Reason: \(error)")
             }
         } catch {
             fatalError("Error on fetching \(name). Reason: \(error)")
         }
     }
     
-    public static func insert(items: Array<Self>, context: FManagedObjectContext) {
+    public static func save(context: FManagedObjectContext,
+                            items: Array<Self>,
+                            predicate: NSPredicate?) {
+        let name = self.entityName
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: name)
+        fetchRequest.predicate = predicate
+        
+        do {
+            guard let fetchResults = try context.fetch(fetchRequest) as? [NSManagedObject] else {
+                fatalError("Error on retrieving fetching results: \(name)")
+            }
+            for fr in fetchResults {
+                context.delete(fr)
+            }
+            self.insert(context: context, items: items)
+        } catch {
+            fatalError("Error on fetching \(name). Reason: \(error)")
+        }
+    }
+    
+    public static func insert(context: FManagedObjectContext,
+                              items: Array<Self>) {
         for item in items {
             item.insert(context: context)
         }

@@ -60,59 +60,80 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let cdm = FCoreDataManager(modelName: "fcoredata")
         let moc = cdm.managedObjectContext
-        let entityName = "test"
-        guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: moc) else {
-            fatalError("Do not find \(entityName) entity")
+//        let entityName = "test"
+//        guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: moc) else {
+//            fatalError("Do not find \(entityName) entity")
+//        }
+////        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+//
+//        let mo = NSManagedObject(entity: entity, insertInto: moc)
+//        print("Insert ID: \(mo.objectID)")
+//        mo.setValue(1, forKey: "id")
+//        mo.setValue("Test name", forKey: "name")
+//        mo.setValue("Test attr", forKey: "attr")
+//        do {
+//            try moc.save()
+//        } catch let error as NSError  {
+//            print("[ERROR] Could not save \(error), \(error.userInfo)")
+//        }
+//
+//        let items = Test.all(context: moc)
+//        print(Test.entityName)
+//        for item in items {
+//            print("id: \(item.id), name: \(item.name), attr: \(item.attr ?? "Def attr")")
+//            print("MOID: \(item.managedObjectID)")
+//        }
+//
+//        let t = Test(id: 2, name: "TestName", attr: "Attr2")
+//        t.managedObjectID = mo.objectID
+//        t.delete(context: moc)
+//
+//        items.first?.bacthUpdate(context: moc, updateObject: t, predicate: nil, isReflectChanges: true)
+//
+//        let mo1 = NSManagedObject(entity: entity, insertInto: moc)
+//        print("Insert ID: \(mo1.objectID)")
+//        mo1.setValue(10, forKey: "id")
+//        mo1.setValue("Test name1", forKey: "name")
+//        mo1.setValue("Test attr1", forKey: "attr")
+//        do {
+//            try moc.save()
+//        } catch let error as NSError  {
+//            print("[ERROR] Could not save \(error), \(error.userInfo)")
+//        }
+//
+//        let t1 = Test(id: 10, name: "Test name1", attr: "Test attr1")
+//        t1.managedObjectID = mo1.objectID
+//        t1.save(context: moc)
+//
+//        let items1 = Test.all(context: moc)
+//        for item in items1 {
+//            print("id: \(item.id), name: \(item.name), attr: \(item.attr ?? "Def attr")")
+//            print("MOID: \(item.managedObjectID)")
+//        }
+//
+//        let t2 = Test(id: 11, name: "Test inser", attr: "Test inser attr")
+//        t2.insert(context: moc)
+        
+        
+        
+        let saveItems = [Test(id: 100, name: "RName123", attr: "RAttr12"),
+                     Test(id: 101, name: "RName23", attr: "RAttr23"),
+//                     Test(id: 102, name: "Name3", attr: "Attr1"),
+//                     Test(id: 103, name: "Name4", attr: "Attr1"),
+//                     Test(id: 104, name: "Name5", attr: "Attr1"),
+//                     Test(id: 105, name: "Name6", attr: "Attr1")
+        ]
+        let ids = saveItems.map { (t) -> Int in
+            return t.id
         }
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let pr = NSPredicate(format: "Self.id IN %@", ids)
+        Test.save(context: moc, items: saveItems, predicate: pr)
         
-        let mo = NSManagedObject(entity: entity, insertInto: moc)
-        print("Insert ID: \(mo.objectID)")
-        mo.setValue(1, forKey: "id")
-        mo.setValue("Test name", forKey: "name")
-        mo.setValue("Test attr", forKey: "attr")
-        do {
-            try moc.save()
-        } catch let error as NSError  {
-            print("[ERROR] Could not save \(error), \(error.userInfo)")
-        }
-    
-        let items = Test.all(context: moc)
-        print(Test.entityName)
-        for item in items {
-            print("id: \(item.id), name: \(item.name), attr: \(item.attr ?? "Def attr")")
-            print("MOID: \(item.managedObjectID)")
-        }
-        
-        let t = Test(id: 2, name: "TestName", attr: "Attr2")
-        t.managedObjectID = mo.objectID
-        t.delete(context: moc)
-        
-        items.first?.bacthUpdate(context: moc, updateObject: t, predicate: nil, isReflectChanges: true)
-        
-        let mo1 = NSManagedObject(entity: entity, insertInto: moc)
-        print("Insert ID: \(mo1.objectID)")
-        mo1.setValue(10, forKey: "id")
-        mo1.setValue("Test name1", forKey: "name")
-        mo1.setValue("Test attr1", forKey: "attr")
-        do {
-            try moc.save()
-        } catch let error as NSError  {
-            print("[ERROR] Could not save \(error), \(error.userInfo)")
-        }
-        
-        let t1 = Test(id: 10, name: "Test name1", attr: "Test attr1")
-        t1.managedObjectID = mo1.objectID
-        t1.save(context: moc)
-        
-        let items1 = Test.all(context: moc)
+        let sort = NSSortDescriptor(key: "id", ascending: true)
+        let items1 = Test.all(context: moc, predicate: pr, sortDescriptors: [sort], limit: 1, offset: 1)
         for item in items1 {
             print("id: \(item.id), name: \(item.name), attr: \(item.attr ?? "Def attr")")
-            print("MOID: \(item.managedObjectID)")
         }
-        
-        let t2 = Test(id: 11, name: "Test inser", attr: "Test inser attr")
-        t2.insert(context: moc)
     }
 
 
