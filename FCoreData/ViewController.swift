@@ -23,6 +23,7 @@ final class Test {
 }
 
 extension Test: FCDEntity {
+    static let entityRelations: Array<FCDRelation>? = nil
     static let managedObjectIDScope: PropertyScope<FManagedObjectID> = PropertyScope<FManagedObjectID>()
     
     enum AttrsNames: String {
@@ -58,7 +59,47 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let cdm = FCoreDataManager(modelName: "fcoredata")
+        let cdm = FCoreDataManager(modelName: "fcoredata2")
+        cdm.set { (mo) in
+            let entry = NSEntityDescription ()
+            entry.name = "MyCustomEntry"
+            
+            let entryIdAttribute = NSAttributeDescription()
+            entryIdAttribute.name = "identifier";
+            entryIdAttribute.attributeType = .stringAttributeType;
+            
+            let element = NSEntityDescription()
+            element.name = "MyCustomElement"
+            
+            let elementIdAttribute =  NSAttributeDescription()
+            elementIdAttribute.name = "identifier"
+            elementIdAttribute.attributeType = .stringAttributeType
+            
+            // To-many relationship from "Element" to "Entry":
+            let entriesRelation = NSRelationshipDescription()
+            
+            // To-one relationship from "Entry" to "Element":
+            let elementRelation = NSRelationshipDescription ()
+            
+            entriesRelation.name = "entries"
+            entriesRelation.destinationEntity = entry
+            entriesRelation.minCount = 0
+            entriesRelation.maxCount = 0  // max = 0 for to-many relationship
+            entriesRelation.deleteRule = .cascadeDeleteRule
+            entriesRelation.inverseRelationship = elementRelation
+            
+            elementRelation.name = "element"
+            elementRelation.destinationEntity = element
+            elementRelation.minCount = 0
+            elementRelation.maxCount = 1 // max = 1 for to-one relationship
+            elementRelation.deleteRule = .nullifyDeleteRule
+            elementRelation.inverseRelationship = entriesRelation
+            
+            entry.properties = [entryIdAttribute, elementRelation]
+            element.properties = [elementIdAttribute, entriesRelation]
+            
+            mo.entities = [Test.schemeEntity(), entry, element]
+        }
         let moc = cdm.managedObjectContext
 //        let entityName = "test"
 //        guard let entity = NSEntityDescription.entity(forEntityName: entityName, in: moc) else {

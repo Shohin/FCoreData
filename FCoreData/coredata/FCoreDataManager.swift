@@ -15,9 +15,15 @@ public enum FCoreDataMigrationType {
 
 final public class FCoreDataManager {
     // MARK: - Initialization
+    private var configManagedModel: ((FManagedObjectModel) -> ())!
+    
     private let modelName: String
     public init(modelName: String) {
         self.modelName = modelName
+    }
+    
+    public func set(configManagedModel: @escaping ((FManagedObjectModel) -> ())) {
+        self.configManagedModel = configManagedModel
     }
     
     public private(set) lazy var managedObjectContext: NSManagedObjectContext = {
@@ -82,41 +88,9 @@ final public class FCoreDataManager {
 //        }
 //
 //        return managedObjectModel
-    
-        let entity = NSEntityDescription()
-        entity.name = "test"
         
-        let idAttr = NSAttributeDescription()
-        idAttr.name = "id"
-        idAttr.attributeType = .integer64AttributeType
-        idAttr.isOptional = false
-        if #available(iOS 11.0, *) {
-//            entity.indexes = [idAttr]
-        } else {
-            idAttr.isIndexed = true
-        }
-        
-        let nameAttr = NSAttributeDescription()
-        nameAttr.name = "name"
-        nameAttr.attributeType = .stringAttributeType
-        nameAttr.isOptional = false
-        if #available(iOS 11.0, *) {
-//            entity.indexes = [nameAttr]
-        } else {
-            nameAttr.isIndexed = true
-        }
-        
-        let attr = NSAttributeDescription()
-        attr.name = "attr"
-        attr.attributeType = .stringAttributeType
-        attr.isOptional = true
-        
-        entity.properties = [idAttr, nameAttr, attr]
-        
-        let entities = [entity]
-        
-        let objectModel = NSManagedObjectModel()
-        objectModel.entities = entities
+        let objectModel = FManagedObjectModel()
+        self.configManagedModel(objectModel)
 
         
         let modelData: Data
