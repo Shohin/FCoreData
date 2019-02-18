@@ -13,8 +13,8 @@ public protocol FCDEntity: class {
     static var entityName: String {get}
     static var entityAttributes: Array<FCDAttribute> {get}
     static var entityRelations: Array<FCDRelation>? {get}
-    var attrValuesByName: Dictionary<String, Any?> {get}
     init(managedObject: FManagedObject)
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?>
 }
 
 public extension FCDEntity {
@@ -61,7 +61,8 @@ public extension FCDEntity {
     public func insert(context: FManagedObjectContext) {
         let entity = Self.entity(context: context)
         let mo = FManagedObject(entity: entity, insertInto: context)
-        for (key, value) in self.attrValuesByName {
+        let attrs = self.attrValuesByName(context: context)
+        for (key, value) in attrs {
             if value == nil,
                 let prop = mo.entity.propertiesByName[key] {
                 assert(prop.isOptional, "Required value in :\(prop.name)")
@@ -79,7 +80,7 @@ public extension FCDEntity {
         let entity = Self.entity(context: context)
         let br = NSBatchUpdateRequest(entity: entity)
         br.predicate = predicate
-        br.propertiesToUpdate = updateObject.attrValuesByName as [AnyHashable : Any]
+        br.propertiesToUpdate = updateObject.attrValuesByName(context: context) as [AnyHashable : Any]
         br.resultType = .updatedObjectIDsResultType
         do {
             guard let res: NSBatchUpdateResult = try context.execute(br) as? NSBatchUpdateResult else {

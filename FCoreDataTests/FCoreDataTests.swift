@@ -47,8 +47,8 @@ extension Student: FCDEntity {
         FCDAttribute(name: AttrsNames.id.value, type: .int, isOptional: false, isIndexed: true, defaultValue: nil),
         FCDAttribute(name: AttrsNames.name.value, type: .string, isOptional: false, isIndexed: true, defaultValue: nil)]
     static let entityRelations: Array<FCDRelation>? = nil
-    
-    var attrValuesByName: Dictionary<String, Any?> {
+
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
         return [AttrsNames.id.value: self.id,
                 AttrsNames.name.value: self.name]
     }
@@ -83,11 +83,11 @@ extension Group: FCDEntity {
         FCDRelation(name: RelationsNames.students.value, destinationType: Student.self, type: .many, deleteRule: .cascadeDeleteRule, isOptional: true, inverseName: nil),
         FCDRelation(name: RelationsNames.students1.value, destinationType: Student.self, type: .many, deleteRule: .cascadeDeleteRule, isOptional: true, inverseName: nil)]
     
-    var attrValuesByName: Dictionary<String, Any?> {
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
         return [AttrsNames.id.value: self.id,
                 AttrsNames.name.value: self.name,
                 RelationsNames.students.value: NSMutableSet(array: self.students.map({ (st) -> FManagedObject in
-                    let mo = Student.insertIntoManagedObject(context: dbm.managedObjectContext)
+                    let mo = Student.insertIntoManagedObject(context: context)
                     mo.setValue(st.id, forKey: Student.AttrsNames.id.value)
                     mo.setValue(st.name, forKey: Student.AttrsNames.name.value)
                     return mo
@@ -95,7 +95,7 @@ extension Group: FCDEntity {
                 RelationsNames.students1.value: NSMutableSet(array: self.students.filter({ (st) -> Bool in
                     return st.id > 5
                 }).map({ (st) -> FManagedObject in
-                    let mo = Student.insertIntoManagedObject(context: dbm.managedObjectContext)
+                    let mo = Student.insertIntoManagedObject(context: context)
                     mo.setValue(st.id, forKey: Student.AttrsNames.id.value)
                     mo.setValue(st.name, forKey: Student.AttrsNames.name.value)
                     return mo
@@ -142,7 +142,7 @@ extension A: FCDEntity {
         FCDAttribute(name: AttrsNames.id.value, type: .int, isOptional: false, isIndexed: true, defaultValue: nil)]
     static let entityRelations: Array<FCDRelation>? = nil
     
-    var attrValuesByName: Dictionary<String, Any?> {
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
         return [AttrsNames.id.value: self.id]
     }
     
@@ -171,8 +171,8 @@ extension B: FCDEntity {
         FCDAttribute(name: AttrsNames.name.value, type: .string, isOptional: false, isIndexed: true, defaultValue: nil)]
     static let entityRelations: Array<FCDRelation>? = [FCDRelation(name: RelationsNames.a.value, destinationType: A.self, type: .one, deleteRule: .cascadeDeleteRule, isOptional: true, inverseName: nil)]
     
-    var attrValuesByName: Dictionary<String, Any?> {
-        let mo = A.insertIntoManagedObject(context: dbm.managedObjectContext)
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
+        let mo = A.insertIntoManagedObject(context: context)
         mo.setValue(self.a.id, forKey: A.AttrsNames.id.value)
         return [AttrsNames.name.value: self.name,
                 RelationsNames.a.value: mo
@@ -229,8 +229,8 @@ extension Child: FCDEntity {
         FCDAttribute(name: AttrsNames.name.value, type: .string, isOptional: false, isIndexed: true, defaultValue: nil)]
     static let entityRelations: Array<FCDRelation>? = [FCDRelation(name: RelationsNames.parent.value, destinationType: Parent.self, type: .one, deleteRule: .noActionDeleteRule, isOptional: false, inverseName: nil)]
     
-    var attrValuesByName: Dictionary<String, Any?> {
-        let pMO = Parent.insertIntoManagedObject(context: dbm.managedObjectContext)
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
+        let pMO = Parent.insertIntoManagedObject(context: context)
         pMO.setValue(self.parent?.title, forKey: Parent.AttrsNames.title.value)
         return [AttrsNames.id.value: self.id,
                 AttrsNames.name.value: self.name,
@@ -266,10 +266,10 @@ extension Parent: FCDEntity {
     static let entityRelations: Array<FCDRelation>? = [
         FCDRelation(name: RelationsNames.childs.value, destinationType: Child.self, type: .many, deleteRule: .cascadeDeleteRule, isOptional: true, inverseName: RelationsNames.inverseChild.value)]
     
-    var attrValuesByName: Dictionary<String, Any?> {
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
         return [AttrsNames.title.value: self.title,
                 RelationsNames.childs.value: NSMutableSet(array: self.childs.map({ (ch) -> FManagedObject in
-                    let mo = Child.insertIntoManagedObject(context: dbm.managedObjectContext)
+                    let mo = Child.insertIntoManagedObject(context: context)
                     mo.setValue(ch.id, forKey: Child.AttrsNames.id.value)
                     mo.setValue(ch.name, forKey: Child.AttrsNames.name.value)
                     return mo

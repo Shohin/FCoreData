@@ -39,7 +39,7 @@ extension Test: FCDEntity {
         print("OBJID: \(managedObject.objectID)")
     }
     
-    var attrValuesByName: Dictionary<String, Any?> {
+    func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
         return [AttrsNames.id.value: self.id,
                 AttrsNames.name.value: self.name,
                 AttrsNames.attr.value: self.attr]
