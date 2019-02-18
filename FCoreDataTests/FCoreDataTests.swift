@@ -379,6 +379,8 @@ class FCoreDataTests: XCTestCase {
             }
         }
         
+        Parent.delete(context: moc, predicate: NSPredicate(format: "title=%@", p.title))
+        
         let p1 = Parent(title: "Title1", childs: [])
         
         let ch = Child(id: 100, name: "Child100", parent: p1)
@@ -398,5 +400,7 @@ class FCoreDataTests: XCTestCase {
             print("Name: \(ch.name)")
             print("Parent: \(ch.parent?.title ?? "No parent")")
         }
+        
+        
     }
 }
