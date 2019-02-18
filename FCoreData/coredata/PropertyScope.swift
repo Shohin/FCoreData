@@ -10,6 +10,9 @@ import Foundation
 
 final public class PropertyScope<T: Any> {
     private var props = [String: T]()
+    public init() {
+        
+    }
     
     private func key(by object: AnyObject) -> String {
         let k = "\(unsafeBitCast(object, to: Int.self))"
