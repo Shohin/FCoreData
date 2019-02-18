@@ -20,7 +20,7 @@ public protocol FCDEntity: class {
 public extension FCDEntity {
     public var managedObjectID: FManagedObjectID? {
         get {
-            return Self.managedObjectIDScope.get(self as AnyObject)
+            return Self.managedObjectIDScope.value(self as AnyObject)
         }
         set {
             if let nw = newValue {
@@ -31,8 +31,8 @@ public extension FCDEntity {
 }
 
 public extension FCDEntity {
-    private func entity(context: FManagedObjectContext) -> NSEntityDescription {
-        let name = type(of: self).entityName
+    private static func entity(context: FManagedObjectContext) -> NSEntityDescription {
+        let name = self.entityName
         guard let entity = NSEntityDescription.entity(forEntityName: name, in: context) else {
             fatalError("Entity not found: \(name)")
         }
@@ -40,7 +40,7 @@ public extension FCDEntity {
     }
     
     private static func removeMOID(obj: Self) {
-        self.managedObjectIDScope.remove(by: obj as AnyObject)
+        self.managedObjectIDScope.remove(obj as AnyObject)
     }
     
     @discardableResult
@@ -58,110 +58,8 @@ public extension FCDEntity {
         return String(describing: self)
     }
     
-    public static func set(relationDestination: FEntityDescription, relationName: String) {
-        guard let rls = self.entityRelations,
-            !rls.isEmpty, let rl = rls.first(where: { (r) -> Bool in
-                return r.name == relationName
-            }) else {
-            return
-        }
-        
-        rl.set(destinationEntity: relationDestination)
-    }
-    
-    public static func schemeEntity() -> FEntityDescription {
-        let entity = FEntityDescription()
-        entity.name = self.entityName
-        
-        func attribute(from attr: FCDAttribute) -> NSAttributeDescription {
-            let newAttr = NSAttributeDescription()
-            newAttr.name = attr.name
-            newAttr.attributeType = attr.type.cdAttrType
-            newAttr.isOptional = attr.isOptional
-            if attr.isIndexed {
-                if #available(iOS 11.0, *) {
-                    //TODO:
-//                    let attributeCreatedDate = NSAttributeDescription()
-//                    attributeCreatedDate.name = #keyPath(PostEntity.createdDate)
-//                    attributeCreatedDate.attributeType = .dateAttributeType
-//                    attributeCreatedDate.isOptional = false
-//
-//                    let attributeID = NSAttributeDescription()
-//                    attributeID.name = #keyPath(PostEntity.id)
-//                    attributeID.attributeType = .stringAttributeType
-//                    attributeID.isOptional = false
-//
-//                    ...
-//
-//                    let attributeVideoURL = NSAttributeDescription()
-//                    attributeVideoURL.name = #keyPath(PostEntity.videoURL)
-//                    attributeVideoURL.attributeType = .URIAttributeType
-//                    attributeVideoURL.isOptional = true
-//
-//                    let indexDescription1 = NSFetchIndexElementDescription(property: attributeCreatedDate, collationType: .binary)
-//                    indexDescription1.isAscending = true
-//                    let index1 = NSFetchIndexDescription(name: "com_mc_index_post_createdDate", elements: [indexDescription1])
-//
-//                    let indexDescription2 = NSFetchIndexElementDescription(property: attributeID, collationType: .binary)
-//                    indexDescription2.isAscending = true
-//                    let index2 = NSFetchIndexDescription(name: "com_mc_index_post_id", elements: [indexDescription2])
-//
-//                    let entity = NSEntityDescription()
-//                    entity.name = PostEntity.entityName
-//                    entity.managedObjectClassName = PostEntity.entityClassName
-//                    entity.properties = [attributeCreatedDate, attributeID, attributeVideoURL, ...]
-//                    entity.renamingIdentifier = "com.mc.entity-post"
-//                    entity.indexes = [index1, index2]
-                    
-//                    NSFetchIndexElementDescription(property: idAttr, collationType: .binary)
-//                    NSFetchIndexDescription(name: <#T##String#>, elements: <#T##[NSFetchIndexElementDescription]?#>)
-//                    entity.indexes = [idAttr]
-                } else {
-                    newAttr.isIndexed = true
-                }
-            }
-            if let defVal = attr.defaultValue {
-                newAttr.defaultValue = defVal
-            }
-            return newAttr
-        }
-        
-        func relation(from rl: FCDRelation) -> NSRelationshipDescription {
-            let r = NSRelationshipDescription()
-            r.name = rl.name
-            r.deleteRule = rl.deleteRule
-//            r.destinationEntity = rl.destinationEntity
-            switch rl.type {
-            case .one:
-                r.minCount = 0
-                r.maxCount = 1
-            case .many:
-                r.minCount = 0
-                r.maxCount = 0
-            }
-            if let irl = rl.inverse {
-                r.inverseRelationship = relation(from: irl)
-            }
-            return r
-        }
-        
-        var props: Array<NSPropertyDescription> = Self.entityAttributes.map { (attr) -> NSAttributeDescription in
-            return attribute(from: attr)
-        }
-        
-        if let rls = Self.entityRelations,
-            !rls.isEmpty {
-            for rl in rls {
-                props.append(relation(from: rl))
-            }
-        }
-        
-        entity.properties = props
-        return entity
-    }
-    
     public func insert(context: FManagedObjectContext) {
-        let entity = self.entity(context: context)
+        let entity = Self.entity(context: context)
         let mo = FManagedObject(entity: entity, insertInto: context)
         for (key, value) in self.attrValuesByName {
             if value == nil,
@@ -178,7 +76,7 @@ public extension FCDEntity {
                             updateObject: Self,
                             predicate: NSPredicate?,
                             isReflectChanges: Bool) {
-        let entity = self.entity(context: context)
+        let entity = Self.entity(context: context)
         let br = NSBatchUpdateRequest(entity: entity)
         br.predicate = predicate
         br.propertiesToUpdate = updateObject.attrValuesByName as [AnyHashable : Any]
@@ -230,6 +128,12 @@ public extension FCDEntity {
         for item in items {
             item.delete(context: context)
         }
+    }
+    
+    public static func insertIntoManagedObject(context: FManagedObjectContext) -> FManagedObject {
+        let entity = self.entity(context: context)
+        let mo = FManagedObject(entity: entity, insertInto: context)
+        return mo
     }
     
     /// If predicate is nil remove all datas

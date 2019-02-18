@@ -13,22 +13,31 @@ public enum FCDRelationType {
 }
 
 final public class FCDRelation {
-    private(set) public var destinationEntity: FEntityDescription!
     public let name: String
+    public let destinationType: FCDEntity.Type
     public let type: FCDRelationType
     public let deleteRule: FDeleteRule
-    public let inverse: FCDRelation?
+    public let isOptional: Bool
+    public let inverseName: String?
     public init(name: String,
+                destinationType: FCDEntity.Type,
                 type: FCDRelationType,
                 deleteRule: FDeleteRule,
-                inverse: FCDRelation?) {
+                isOptional: Bool,
+                inverseName: String?) {
         self.name = name
+        self.destinationType = destinationType
         self.type = type
         self.deleteRule = deleteRule
-        self.inverse = inverse
+        self.isOptional = isOptional
+        self.inverseName = inverseName
     }
-    
-    public func set(destinationEntity: FEntityDescription) {
-        self.destinationEntity = destinationEntity
+}
+
+extension FCDRelation: Equatable {
+    public static func == (lhs: FCDRelation, rhs: FCDRelation) -> Bool {
+        return lhs.name == rhs.name
+            && lhs.type == rhs.type
+            && lhs.deleteRule == rhs.deleteRule
     }
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D335068C221963B400FC95B3 /* FCDSchemeCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D335068B221963B400FC95B3 /* FCDSchemeCreator.swift */; };
+		D3838661221A893000CFD96B /* FCDSchemeCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D335068B221963B400FC95B3 /* FCDSchemeCreator.swift */; };
 		D39D94282215AFF700EA75F1 /* FCDAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39D94272215AFF700EA75F1 /* FCDAttribute.swift */; };
 		D39D942A2215B04400EA75F1 /* PropertyScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39D94292215B04400EA75F1 /* PropertyScope.swift */; };
 		D39D94422215B15700EA75F1 /* ForobCoreData.h in Headers */ = {isa = PBXBuildFile; fileRef = D39D94322215B15700EA75F1 /* ForobCoreData.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,6 +64,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D335068B221963B400FC95B3 /* FCDSchemeCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCDSchemeCreator.swift; sourceTree = "<group>"; };
 		D39D94272215AFF700EA75F1 /* FCDAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FCDAttribute.swift; sourceTree = "<group>"; };
 		D39D94292215B04400EA75F1 /* PropertyScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyScope.swift; sourceTree = "<group>"; };
 		D39D94302215B15700EA75F1 /* ForobCoreData.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ForobCoreData.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +169,7 @@
 			children = (
 				D39D94292215B04400EA75F1 /* PropertyScope.swift */,
 				D3FA2A802213E15900E4B66C /* FCoreDataWrapper.swift */,
+				D335068B221963B400FC95B3 /* FCDSchemeCreator.swift */,
 				D3FA2A7C2213D15800E4B66C /* FCoreDataManager.swift */,
 				D39D94272215AFF700EA75F1 /* FCDAttribute.swift */,
 				D3C757142216E4C4002EEB17 /* FCDRelation.swift */,
@@ -317,6 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3838661221A893000CFD96B /* FCDSchemeCreator.swift in Sources */,
 				D3C757162216EAF7002EEB17 /* FCDRelation.swift in Sources */,
 				D39D944E2215B17900EA75F1 /* PropertyScope.swift in Sources */,
 				D39D944F2215B17900EA75F1 /* FCoreDataWrapper.swift in Sources */,
@@ -336,6 +341,7 @@
 				D3FA2A5C2213D12600E4B66C /* ViewController.swift in Sources */,
 				D3FA2A5A2213D12600E4B66C /* AppDelegate.swift in Sources */,
 				D3FA2A7F2213E13C00E4B66C /* FCDEntity.swift in Sources */,
+				D335068C221963B400FC95B3 /* FCDSchemeCreator.swift in Sources */,
 				D3FA2A7D2213D15800E4B66C /* FCoreDataManager.swift in Sources */,
 				D3C757152216E4C4002EEB17 /* FCDRelation.swift in Sources */,
 			);

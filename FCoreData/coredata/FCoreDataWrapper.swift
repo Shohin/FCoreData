@@ -8,7 +8,7 @@
 
 import CoreData
 
-public typealias FEntityDescription = NSEntityDescription
+typealias FEntityDescription = NSEntityDescription
 public typealias FManagedObjectContext = NSManagedObjectContext
 public typealias FManagedObjectID = NSManagedObjectID
 public typealias FManagedObject = NSManagedObject

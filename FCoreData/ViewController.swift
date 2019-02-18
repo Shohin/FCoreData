@@ -98,7 +98,9 @@ class ViewController: UIViewController {
             entry.properties = [entryIdAttribute, elementRelation]
             element.properties = [elementIdAttribute, entriesRelation]
             
-            mo.entities = [Test.schemeEntity(), entry, element]
+            let sc = FCDSchemeCreator(managedObjectModel: mo, entityTypes: [Test.self])
+            sc.create()
+            mo.entities = mo.entities + [entry, element]
         }
         let moc = cdm.managedObjectContext
 //        let entityName = "test"

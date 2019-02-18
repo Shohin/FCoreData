@@ -16,7 +16,7 @@ final public class PropertyScope<T: Any> {
         return k
     }
     
-    public func get(_ key: AnyObject) -> T? {
+    public func value(_ key: AnyObject) -> T? {
         let k = self.key(by: key)
         return self.props[k] ?? nil
     }
@@ -26,7 +26,7 @@ final public class PropertyScope<T: Any> {
         self.props[k] = value
     }
     
-    public func remove(by key: AnyObject) {
+    public func remove(_ key: AnyObject) {
         let k = self.key(by: key)
         self.props.removeValue(forKey: k)
     }
