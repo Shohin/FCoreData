@@ -53,6 +53,13 @@ extension Student: FCDEntity {
                 AttrsNames.name.value: self.name]
     }
     
+    func newManagedObject(context: FManagedObjectContext) -> FManagedObject {
+        let mo = Student.insertIntoManagedObject(context: context)
+        mo.setValue(self.id, forKey: AttrsNames.id.value)
+        mo.setValue(self.name, forKey: AttrsNames.name.value)
+        return mo
+    }
+    
     convenience init(managedObject: FManagedObject) {
         self.init(id: (managedObject.value(forKey: AttrsNames.id.value) as? Int ?? -1),
                   name: (managedObject.value(forKey: AttrsNames.name.value) as? String ?? ""))
@@ -87,18 +94,12 @@ extension Group: FCDEntity {
         return [AttrsNames.id.value: self.id,
                 AttrsNames.name.value: self.name,
                 RelationsNames.students.value: NSMutableSet(array: self.students.map({ (st) -> FManagedObject in
-                    let mo = Student.insertIntoManagedObject(context: context)
-                    mo.setValue(st.id, forKey: Student.AttrsNames.id.value)
-                    mo.setValue(st.name, forKey: Student.AttrsNames.name.value)
-                    return mo
+                    return st.newManagedObject(context: context)
                 })),
                 RelationsNames.students1.value: NSMutableSet(array: self.students.filter({ (st) -> Bool in
                     return st.id > 5
                 }).map({ (st) -> FManagedObject in
-                    let mo = Student.insertIntoManagedObject(context: context)
-                    mo.setValue(st.id, forKey: Student.AttrsNames.id.value)
-                    mo.setValue(st.name, forKey: Student.AttrsNames.name.value)
-                    return mo
+                    return st.newManagedObject(context: context)
                 }))
         ]
     }
@@ -146,6 +147,12 @@ extension A: FCDEntity {
         return [AttrsNames.id.value: self.id]
     }
     
+    func newManagedObject(context: FManagedObjectContext) -> FManagedObject {
+        let mo = A.insertIntoManagedObject(context: context)
+        mo.setValue(self.id, forKey: AttrsNames.id.value)
+        return mo
+    }
+    
     convenience init(managedObject: FManagedObject) {
         self.init(id: (managedObject.value(forKey: AttrsNames.id.value) as? Int ?? -1))
     }
@@ -172,10 +179,8 @@ extension B: FCDEntity {
     static let entityRelations: Array<FCDRelation>? = [FCDRelation(name: RelationsNames.a.value, destinationType: A.self, type: .one, deleteRule: .cascadeDeleteRule, isOptional: true, inverseName: nil)]
     
     func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
-        let mo = A.insertIntoManagedObject(context: context)
-        mo.setValue(self.a.id, forKey: A.AttrsNames.id.value)
         return [AttrsNames.name.value: self.name,
-                RelationsNames.a.value: mo
+                RelationsNames.a.value: self.a.newManagedObject(context: context)
         ]
     }
     
@@ -230,11 +235,17 @@ extension Child: FCDEntity {
     static let entityRelations: Array<FCDRelation>? = [FCDRelation(name: RelationsNames.parent.value, destinationType: Parent.self, type: .one, deleteRule: .noActionDeleteRule, isOptional: false, inverseName: nil)]
     
     func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
-        let pMO = Parent.insertIntoManagedObject(context: context)
-        pMO.setValue(self.parent?.title, forKey: Parent.AttrsNames.title.value)
+        let pMO = self.parent?.newManagedObject(context: context)
         return [AttrsNames.id.value: self.id,
                 AttrsNames.name.value: self.name,
-                RelationsNames.parent.value: self.parent != nil ? pMO : nil]
+                RelationsNames.parent.value: pMO]
+    }
+    
+    func newManagedObject(context: FManagedObjectContext) -> FManagedObject {
+        let mo = Child.insertIntoManagedObject(context: context)
+        mo.setValue(self.id, forKey: AttrsNames.id.value)
+        mo.setValue(self.name, forKey: AttrsNames.name.value)
+        return mo
     }
     
     convenience init(managedObject: FManagedObject) {
@@ -269,12 +280,15 @@ extension Parent: FCDEntity {
     func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?> {
         return [AttrsNames.title.value: self.title,
                 RelationsNames.childs.value: NSMutableSet(array: self.childs.map({ (ch) -> FManagedObject in
-                    let mo = Child.insertIntoManagedObject(context: context)
-                    mo.setValue(ch.id, forKey: Child.AttrsNames.id.value)
-                    mo.setValue(ch.name, forKey: Child.AttrsNames.name.value)
-                    return mo
+                    return ch.newManagedObject(context: context)
                 }))
         ]
+    }
+    
+    func newManagedObject(context: FManagedObjectContext) -> FManagedObject {
+        let mo = Parent.insertIntoManagedObject(context: context)
+        mo.setValue(self.title, forKey: AttrsNames.title.value)
+        return mo
     }
     
     convenience init(managedObject: FManagedObject) {

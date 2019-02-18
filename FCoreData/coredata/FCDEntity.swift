@@ -15,6 +15,13 @@ public protocol FCDEntity: class {
     static var entityRelations: Array<FCDRelation>? {get}
     init(managedObject: FManagedObject)
     func attrValuesByName(context: FManagedObjectContext) -> Dictionary<String, Any?>
+    func newManagedObject(context: FManagedObjectContext) -> FManagedObject
+}
+
+public extension FCDEntity {
+    func newManagedObject(context: FManagedObjectContext) -> FManagedObject {
+        return Self.insertIntoManagedObject(context: context)
+    }
 }
 
 public extension FCDEntity {
