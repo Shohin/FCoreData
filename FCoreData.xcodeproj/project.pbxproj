@@ -21,6 +21,7 @@
 		D39D94522215B17900EA75F1 /* FCDEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A7E2213E13C00E4B66C /* FCDEntity.swift */; };
 		D3C757152216E4C4002EEB17 /* FCDRelation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C757142216E4C4002EEB17 /* FCDRelation.swift */; };
 		D3C757162216EAF7002EEB17 /* FCDRelation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C757142216E4C4002EEB17 /* FCDRelation.swift */; };
+		D3CE66A4224E442600F9D389 /* FCoreData.podspec in Resources */ = {isa = PBXBuildFile; fileRef = D3CE66A3224E442600F9D389 /* FCoreData.podspec */; };
 		D3FA2A5A2213D12600E4B66C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A592213D12600E4B66C /* AppDelegate.swift */; };
 		D3FA2A5C2213D12600E4B66C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FA2A5B2213D12600E4B66C /* ViewController.swift */; };
 		D3FA2A5F2213D12600E4B66C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D3FA2A5D2213D12600E4B66C /* Main.storyboard */; };
@@ -71,6 +72,7 @@
 		D39D94322215B15700EA75F1 /* ForobCoreData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ForobCoreData.h; sourceTree = "<group>"; };
 		D39D94332215B15700EA75F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D3C757142216E4C4002EEB17 /* FCDRelation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FCDRelation.swift; sourceTree = "<group>"; };
+		D3CE66A3224E442600F9D389 /* FCoreData.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FCoreData.podspec; sourceTree = SOURCE_ROOT; };
 		D3FA2A562213D12600E4B66C /* FCoreData.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FCoreData.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FA2A592213D12600E4B66C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D3FA2A5B2213D12600E4B66C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -144,7 +146,8 @@
 		D3FA2A582213D12600E4B66C /* FCoreData */ = {
 			isa = PBXGroup;
 			children = (
-				D3FA2A7B2213D15800E4B66C /* coredata */,
+				D3FA2A7B2213D15800E4B66C /* sources */,
+				D3CE66A3224E442600F9D389 /* FCoreData.podspec */,
 				D3FA2A592213D12600E4B66C /* AppDelegate.swift */,
 				D3FA2A5B2213D12600E4B66C /* ViewController.swift */,
 				D3FA2A5D2213D12600E4B66C /* Main.storyboard */,
@@ -164,7 +167,7 @@
 			path = FCoreDataTests;
 			sourceTree = "<group>";
 		};
-		D3FA2A7B2213D15800E4B66C /* coredata */ = {
+		D3FA2A7B2213D15800E4B66C /* sources */ = {
 			isa = PBXGroup;
 			children = (
 				D39D94292215B04400EA75F1 /* PropertyScope.swift */,
@@ -175,7 +178,7 @@
 				D3C757142216E4C4002EEB17 /* FCDRelation.swift */,
 				D3FA2A7E2213E13C00E4B66C /* FCDEntity.swift */,
 			);
-			path = coredata;
+			path = sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -303,6 +306,7 @@
 			files = (
 				D3FA2A642213D12700E4B66C /* LaunchScreen.storyboard in Resources */,
 				D3FA2A612213D12700E4B66C /* Assets.xcassets in Resources */,
+				D3CE66A4224E442600F9D389 /* FCoreData.podspec in Resources */,
 				D3FA2A5F2213D12600E4B66C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,10 +397,11 @@
 		D39D94472215B15700EA75F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = WCDMTFU55Z;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -424,6 +429,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = WCDMTFU55Z;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
