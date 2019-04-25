@@ -17,13 +17,34 @@ final public class FCoreDataManager {
     // MARK: - Initialization
     private var configManagedModel: ((FManagedObjectModel) -> ())!
     
+    private let dbFolderPath: String
+    private let modelPath: String
     private let modelName: String
-    public init(modelName: String) {
+    private let migrationType: FCoreDataMigrationType
+    public init(modelName: String,
+                migrationType: FCoreDataMigrationType) {
         self.modelName = modelName
+        self.migrationType = migrationType
+        
+        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+        let documentsDirectory = paths.first ?? ""
+        let modelFile = "\(modelName).momd"
+        let dbPath = "\(documentsDirectory)/db"
+        self.dbFolderPath = dbPath
+        let modelPath = "\(dbPath)/model/\(modelFile)"
+        print("Model path: \(modelPath)")
+        self.modelPath = modelPath
     }
     
     public func set(configManagedModel: @escaping ((FManagedObjectModel) -> ())) {
         self.configManagedModel = configManagedModel
+    }
+    
+    public func migrate() {
+        switch self.migrationType {
+        case .restore:
+            self.restoreMigration()
+        }
     }
     
     public private(set) lazy var managedObjectContext: NSManagedObjectContext = {
@@ -37,16 +58,52 @@ final public class FCoreDataManager {
     }()
     
     private lazy var managedObjectModel: NSManagedObjectModel = {
-        let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
-        let documentsDirectory = paths.first ?? ""
-        let modelFile = "\(self.modelName).momd"
-        let dbPath = "\(documentsDirectory)/db"
-        let modelPath = "\(dbPath)/\(modelFile)"
+        return self.objectModel() ?? self.newObjectModel()
+    }()
+    
+    private lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
+        // Initialize Persistent Store Coordinator
+        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
         
-        print("Model path: \(modelPath)")
+        // Helpers
+        let fileManager = FileManager.default
+        let storeName = "\(self.modelName).sqlite"
         
-        if FileManager.default.fileExists(atPath: modelPath) {
-            let modelUrl = URL(fileURLWithPath: modelPath)
+        // URL Documents Directory
+        let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        
+        // URL Persistent Store
+        let persistentStoreURL = documentsDirectoryURL.appendingPathComponent(storeName)
+        let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+        do {
+            // Add Persistent Store
+            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: persistentStoreURL, options: options)
+            
+        } catch {
+            fatalError("Unable to Add Persistent Store")
+        }
+        
+        return persistentStoreCoordinator
+    }()
+    
+    private var existsObjectModel: Bool {
+        return FileManager.default.fileExists(atPath: self.modelPath)
+    }
+    
+    private func restoreMigration() {
+        if self.existsObjectModel {
+            do {
+                try FileManager.default.removeItem(atPath: self.modelPath)
+                self.createObjectModel()
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    private func objectModel() -> FManagedObjectModel? {
+        if self.existsObjectModel {
+            let modelUrl = URL(fileURLWithPath: self.modelPath)
             do {
                 let data = try Data(contentsOf: modelUrl)
                 let managedObjectModel: NSManagedObjectModel
@@ -77,21 +134,13 @@ final public class FCoreDataManager {
             }
         }
         
-//        // Fetch Model URL
-//        guard let modelURL = Bundle.main.url(forResource: self.modelName, withExtension: "momd") else {
-//            fatalError("Unable to Find Data Model")
-//        }
-//
-//        // Initialize Managed Object Model
-//        guard let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL) else {
-//            fatalError("Unable to Load Data Model")
-//        }
-//
-//        return managedObjectModel
-        
+        return nil
+    }
+    
+    private func newObjectModel() -> FManagedObjectModel {
         let objectModel = FManagedObjectModel()
         self.configManagedModel(objectModel)
-
+        
         
         let modelData: Data
         if #available(iOS 12.0, *) {
@@ -108,7 +157,7 @@ final public class FCoreDataManager {
         
         do {
             do {
-                let dbUrl = URL(fileURLWithPath: dbPath, isDirectory: true)
+                let dbUrl = URL(fileURLWithPath: self.dbFolderPath, isDirectory: true)
                 try FileManager.default.createDirectory(at: dbUrl, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 print("Error on creating db directory. REASON:")
@@ -124,33 +173,11 @@ final public class FCoreDataManager {
         }
         
         return objectModel
-        
-    }()
+    }
     
-    private lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
-        // Initialize Persistent Store Coordinator
-        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        
-        // Helpers
-        let fileManager = FileManager.default
-        let storeName = "\(self.modelName).sqlite"
-        
-        // URL Documents Directory
-        let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        
-        // URL Persistent Store
-        let persistentStoreURL = documentsDirectoryURL.appendingPathComponent(storeName)
-        
-        do {
-            // Add Persistent Store
-            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: persistentStoreURL, options: nil)
-            
-        } catch {
-            fatalError("Unable to Add Persistent Store")
-        }
-        
-        return persistentStoreCoordinator
-    }()
+    private func createObjectModel() {
+        let _ = self.newObjectModel()
+    }
     
     // MARK: - Notification Handling
     

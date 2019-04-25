@@ -25,7 +25,7 @@ public extension FCDEntity {
 }
 
 public extension FCDEntity {
-    public var managedObjectID: FManagedObjectID? {
+    var managedObjectID: FManagedObjectID? {
         get {
             return Self.managedObjectIDScope.value(self as AnyObject)
         }
@@ -61,11 +61,11 @@ public extension FCDEntity {
         return false
     }
     
-    public static var entityName: String {
+    static var entityName: String {
         return String(describing: self)
     }
     
-    public func insert(context: FManagedObjectContext) {
+    func insert(context: FManagedObjectContext) {
         let entity = Self.entity(context: context)
         let mo = FManagedObject(entity: entity, insertInto: context)
         let attrs = self.attrValuesByName(context: context)
@@ -80,7 +80,7 @@ public extension FCDEntity {
     }
     
     //Referential Integrity: Referential integrity will not be maintained between related objects. As an example, setting an employee’s department will not in turn update the array of employees on the department object. In light of this, its typically best to avoid using a batch update request on properties that reference other NSManagedObjects.
-    public func bacthUpdate(context: FManagedObjectContext,
+    func bacthUpdate(context: FManagedObjectContext,
                             updateObject: Self,
                             predicate: NSPredicate?,
                             isReflectChanges: Bool) {
@@ -112,7 +112,7 @@ public extension FCDEntity {
     
     //removed if exists and updated, else inserted
     //it worked correct when managedObjectID is not null
-    public func save(context: FManagedObjectContext) {
+    func save(context: FManagedObjectContext) {
         if let _ = self.managedObjectID {
             self.delete(context: context)
         }
@@ -120,7 +120,7 @@ public extension FCDEntity {
     }
     
     //without managedObjectID crashed
-    public func delete(context: FManagedObjectContext) {
+    func delete(context: FManagedObjectContext) {
         guard let moID = self.managedObjectID else {
             fatalError("Object not found for deleting!")
         }
@@ -131,21 +131,21 @@ public extension FCDEntity {
         }
     }
     
-    public static func delete(context: FManagedObjectContext,
+    static func delete(context: FManagedObjectContext,
                               items: Array<Self>) {
         for item in items {
             item.delete(context: context)
         }
     }
     
-    public static func insertIntoManagedObject(context: FManagedObjectContext) -> FManagedObject {
+    static func insertIntoManagedObject(context: FManagedObjectContext) -> FManagedObject {
         let entity = self.entity(context: context)
         let mo = FManagedObject(entity: entity, insertInto: context)
         return mo
     }
     
     /// If predicate is nil remove all datas
-    public static func delete(context: FManagedObjectContext,
+    static func delete(context: FManagedObjectContext,
                               predicate: NSPredicate?) {
         let name = self.entityName
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: name)
@@ -168,7 +168,7 @@ public extension FCDEntity {
         }
     }
     
-    public static func save(context: FManagedObjectContext,
+    static func save(context: FManagedObjectContext,
                             items: Array<Self>,
                             predicate: NSPredicate?) {
         let name = self.entityName
@@ -188,14 +188,14 @@ public extension FCDEntity {
         }
     }
     
-    public static func insert(context: FManagedObjectContext,
+    static func insert(context: FManagedObjectContext,
                               items: Array<Self>) {
         for item in items {
             item.insert(context: context)
         }
     }
     
-    public static func all(context: FManagedObjectContext,
+    static func all(context: FManagedObjectContext,
                            predicate: NSPredicate? = nil,
                            sortDescriptors: Array<NSSortDescriptor>? = nil,
                            limit: Int? = nil,
