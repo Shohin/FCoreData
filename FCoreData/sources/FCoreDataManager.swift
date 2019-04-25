@@ -18,8 +18,10 @@ final public class FCoreDataManager {
     private var configManagedModel: ((FManagedObjectModel) -> ())!
     
     private let dbFolderPath: String
-    private let modelPath: String
     private let modelName: String
+    private let modelPath: String
+    private let storeName: String
+    private let storePath: String
     private let migrationType: FCoreDataMigrationType
     public init(modelName: String,
                 migrationType: FCoreDataMigrationType) {
@@ -28,16 +30,28 @@ final public class FCoreDataManager {
         
         let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
         let documentsDirectory = paths.first ?? ""
+        
         let modelFile = "\(modelName).momd"
+        
         let dbPath = "\(documentsDirectory)/db"
+        
         self.dbFolderPath = dbPath
-        let modelPath = "\(dbPath)/model/\(modelFile)"
-        print("Model path: \(modelPath)")
-        self.modelPath = modelPath
+        
+        self.modelPath = "\(dbPath)/model/\(modelFile)"
+        print("Model path: \(self.modelPath)")
+        
+        self.storeName = "\(self.modelName).sqlite"
+        self.storePath = "\(dbPath)/\(self.storeName)"
+        print("Store path: \(self.storePath)")
     }
     
     public func set(configManagedModel: @escaping ((FManagedObjectModel) -> ())) {
         self.configManagedModel = configManagedModel
+    }
+    
+    @discardableResult
+    public func delete() -> Bool {
+        return self.tryDelete()
     }
     
     public func migrate() {
@@ -67,7 +81,7 @@ final public class FCoreDataManager {
         
         // Helpers
         let fileManager = FileManager.default
-        let storeName = "\(self.modelName).sqlite"
+        let storeName = self.storeName
         
         // URL Documents Directory
         let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -90,15 +104,29 @@ final public class FCoreDataManager {
         return FileManager.default.fileExists(atPath: self.modelPath)
     }
     
+    private var existsStore: Bool {
+        return FileManager.default.fileExists(atPath: self.storePath)
+    }
+    
     private func restoreMigration() {
+        self.tryDelete()
+    }
+    
+    @discardableResult
+    private func tryDelete() -> Bool {
         if self.existsObjectModel {
             do {
                 try FileManager.default.removeItem(atPath: self.modelPath)
-                self.createObjectModel()
+                if self.existsStore {
+                    try FileManager.default.removeItem(atPath: self.storePath)
+                }
+                return true
             } catch {
                 print(error)
+                return false
             }
         }
+        return false
     }
     
     private func objectModel() -> FManagedObjectModel? {
