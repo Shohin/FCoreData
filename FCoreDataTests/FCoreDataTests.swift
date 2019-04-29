@@ -7,9 +7,9 @@
 //
 
 import XCTest
-@testable import FCoreData
+@testable import ForobCoreData
 
-let dbm = FCoreDataManager(modelName: "test")
+let dbm = FCoreDataManager(modelName: "test", migrationType: .restore)
 
 final class Student {
     let id: Int
@@ -414,7 +414,10 @@ class FCoreDataTests: XCTestCase {
             print("Name: \(ch.name)")
             print("Parent: \(ch.parent?.title ?? "No parent")")
         }
-        
-        
+    }
+    
+    func testDelete() {
+        let success = dbm.delete()
+        XCTAssertTrue(success)
     }
 }

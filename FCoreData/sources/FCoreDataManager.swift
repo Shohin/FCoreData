@@ -17,7 +17,7 @@ final public class FCoreDataManager {
     // MARK: - Initialization
     private var configManagedModel: ((FManagedObjectModel) -> ())!
     
-    private let dbFolderPath: String
+    private let folderPath: String
     private let modelName: String
     private let modelPath: String
     private let storeName: String
@@ -35,9 +35,9 @@ final public class FCoreDataManager {
         
         let dbPath = "\(documentsDirectory)/db"
         
-        self.dbFolderPath = dbPath
+        self.folderPath = "\(dbPath)/model"
         
-        self.modelPath = "\(dbPath)/model/\(modelFile)"
+        self.modelPath = "\(self.folderPath)/\(modelFile)"
         print("Model path: \(self.modelPath)")
         
         self.storeName = "\(self.modelName).sqlite"
@@ -104,8 +104,8 @@ final public class FCoreDataManager {
         return FileManager.default.fileExists(atPath: self.modelPath)
     }
     
-    private var existsStore: Bool {
-        return FileManager.default.fileExists(atPath: self.storePath)
+    private var existsFolder: Bool {
+        return FileManager.default.fileExists(atPath: self.folderPath)
     }
     
     private func restoreMigration() {
@@ -114,12 +114,10 @@ final public class FCoreDataManager {
     
     @discardableResult
     private func tryDelete() -> Bool {
-        if self.existsObjectModel {
+        if self.existsFolder {
             do {
-                try FileManager.default.removeItem(atPath: self.modelPath)
-                if self.existsStore {
-                    try FileManager.default.removeItem(atPath: self.storePath)
-                }
+                try FileManager.default.removeItem(atPath: self.folderPath)
+                self.deletePersistentStore()
                 return true
             } catch {
                 print(error)
@@ -127,6 +125,21 @@ final public class FCoreDataManager {
             }
         }
         return false
+    }
+    
+    private func deletePersistentStore() {
+        if let persistentStore = self.persistentStoreCoordinator.persistentStores.last {
+            let storeUrl = self.persistentStoreCoordinator.url(for: persistentStore)
+            self.managedObjectContext.performAndWait {
+                self.managedObjectContext.reset()
+                do {
+                    try self.persistentStoreCoordinator.remove(persistentStore)
+                    try FileManager.default.removeItem(at: storeUrl)
+                } catch {
+                    print("Error removing Persistent store: \(error)")
+                }
+            }
+        }
     }
     
     private func objectModel() -> FManagedObjectModel? {
@@ -185,14 +198,13 @@ final public class FCoreDataManager {
         
         do {
             do {
-                let dbUrl = URL(fileURLWithPath: self.dbFolderPath, isDirectory: true)
-                try FileManager.default.createDirectory(at: dbUrl, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: self.folderPath, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 print("Error on creating db directory. REASON:")
                 print(error)
                 fatalError("Error on creating db directory.")
             }
-            let modelUrl = URL(fileURLWithPath: modelPath)
+            let modelUrl = URL(fileURLWithPath: self.modelPath)
             try modelData.write(to: modelUrl, options: Data.WritingOptions.atomic)
         } catch {
             print("Error on writing model data. REASON:")

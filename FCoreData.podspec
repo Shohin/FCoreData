@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'FCoreData'
-  s.version          = '0.0.3'
+  s.version          = '0.0.4'
   s.swift_version    = '4.2'
   s.summary          = 'Forob core data library'
 

@@ -266,9 +266,11 @@
 					};
 					D3FA2A552213D12600E4B66C = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
 					};
 					D3FA2A692213D12700E4B66C = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
 						TestTargetID = D3FA2A552213D12600E4B66C;
 					};
 				};
@@ -580,7 +582,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = shohin.FCoreData;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -598,7 +600,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = shohin.FCoreData;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -617,7 +619,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = shohin.FCoreDataTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FCoreData.app/FCoreData";
 			};
@@ -637,7 +639,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = shohin.FCoreDataTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FCoreData.app/FCoreData";
 			};

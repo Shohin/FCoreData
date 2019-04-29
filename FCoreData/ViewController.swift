@@ -59,7 +59,7 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let cdm = FCoreDataManager(modelName: "fcoredata2")
+        let cdm = FCoreDataManager(modelName: "fcoredata2", migrationType: .restore)
         cdm.set { (mo) in
             let entry = NSEntityDescription ()
             entry.name = "MyCustomEntry"
