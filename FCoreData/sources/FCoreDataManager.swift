@@ -88,14 +88,7 @@ final public class FCoreDataManager {
         
         // URL Persistent Store
         let persistentStoreURL = documentsDirectoryURL.appendingPathComponent(storeName)
-        let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
-        do {
-            // Add Persistent Store
-            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: persistentStoreURL, options: options)
-            
-        } catch {
-            fatalError("Unable to Add Persistent Store")
-        }
+        self.config(persistentStoreCoordinator: persistentStoreCoordinator, url: persistentStoreURL)
         
         return persistentStoreCoordinator
     }()
@@ -139,6 +132,17 @@ final public class FCoreDataManager {
                     print("Error removing Persistent store: \(error)")
                 }
             }
+        }
+    }
+    
+    private func config(persistentStoreCoordinator: NSPersistentStoreCoordinator, url: URL) {
+        let options = [NSMigratePersistentStoresAutomaticallyOption: true, NSInferMappingModelAutomaticallyOption: true]
+        do {
+            // Add Persistent Store
+            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: options)
+            
+        } catch {
+            fatalError("Unable to Add Persistent Store")
         }
     }
     
