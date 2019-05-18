@@ -417,7 +417,10 @@ class FCoreDataTests: XCTestCase {
     }
     
     func testDelete() {
-        let success = dbm.delete()
-        XCTAssertTrue(success)
+        dbm.recreate()
+        let p3 = Parent(title: "Title3", childs: [])
+        let ch2 = Child(id: 102, name: "Child102", parent: p3)
+        ch2.insert(context: dbm.managedObjectContext)
+        
     }
 }

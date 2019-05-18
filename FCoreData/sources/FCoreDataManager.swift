@@ -45,52 +45,16 @@ final public class FCoreDataManager {
         print("Store path: \(self.storePath)")
     }
     
-    public func set(configManagedModel: @escaping ((FManagedObjectModel) -> ())) {
-        self.configManagedModel = configManagedModel
-    }
-    
-    @discardableResult
-    public func delete() -> Bool {
-        return self.tryDelete()
-    }
-    
-    public func migrate() {
-        switch self.migrationType {
-        case .restore:
-            self.restoreMigration()
-        }
-    }
-    
     public private(set) lazy var managedObjectContext: NSManagedObjectContext = {
-        // Initialize Managed Object Context
-        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        
-        // Configure Managed Object Context
-        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
-        
-        return managedObjectContext
+        return self.newManagedObjectContext()
+    }()
+    
+    private lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
+        return self.newPersistentStoreCoordinator()
     }()
     
     private lazy var managedObjectModel: NSManagedObjectModel = {
         return self.objectModel() ?? self.newObjectModel()
-    }()
-    
-    private lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
-        // Initialize Persistent Store Coordinator
-        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        
-        // Helpers
-        let fileManager = FileManager.default
-        let storeName = self.storeName
-        
-        // URL Documents Directory
-        let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        
-        // URL Persistent Store
-        let persistentStoreURL = documentsDirectoryURL.appendingPathComponent(storeName)
-        self.config(persistentStoreCoordinator: persistentStoreCoordinator, url: persistentStoreURL)
-        
-        return persistentStoreCoordinator
     }()
     
     private var existsObjectModel: Bool {
@@ -101,8 +65,35 @@ final public class FCoreDataManager {
         return FileManager.default.fileExists(atPath: self.folderPath)
     }
     
-    private func restoreMigration() {
+    public func set(configManagedModel: @escaping ((FManagedObjectModel) -> ())) {
+        self.configManagedModel = configManagedModel
+    }
+    
+    @discardableResult
+    public func delete() -> Bool {
+        return self.tryDelete()
+    }
+    
+    public func recreate() {
         self.tryDelete()
+        self.create()
+    }
+    
+    public func create() {
+        self.managedObjectModel = self.newObjectModel()
+        self.persistentStoreCoordinator = self.newPersistentStoreCoordinator()
+        self.managedObjectContext = self.newManagedObjectContext()
+    }
+    
+    public func migrate() {
+        switch self.migrationType {
+        case .restore:
+            self.restoreMigration()
+        }
+    }
+    
+    private func restoreMigration() {
+        self.recreate()
     }
     
     @discardableResult
@@ -219,8 +210,32 @@ final public class FCoreDataManager {
         return objectModel
     }
     
-    private func createObjectModel() {
-        let _ = self.newObjectModel()
+    private func newPersistentStoreCoordinator() -> NSPersistentStoreCoordinator {
+        // Initialize Persistent Store Coordinator
+        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
+        
+        // Helpers
+        let fileManager = FileManager.default
+        let storeName = self.storeName
+        
+        // URL Documents Directory
+        let documentsDirectoryURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        
+        // URL Persistent Store
+        let persistentStoreURL = documentsDirectoryURL.appendingPathComponent(storeName)
+        self.config(persistentStoreCoordinator: persistentStoreCoordinator, url: persistentStoreURL)
+        
+        return persistentStoreCoordinator
+    }
+    
+    private func newManagedObjectContext() -> NSManagedObjectContext {
+        // Initialize Managed Object Context
+        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        
+        // Configure Managed Object Context
+        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
+        
+        return managedObjectContext
     }
     
     // MARK: - Notification Handling
