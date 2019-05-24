@@ -10,27 +10,39 @@ import Foundation
 
 final public class PropertyScope<T: Any> {
     private var props = [String: T]()
+    private let accessQueue = DispatchQueue(label: "PropertyScopeAccess", attributes: .concurrent)
     public init() {
         
     }
     
     private func key(by object: AnyObject) -> String {
-        let k = "\(unsafeBitCast(object, to: Int.self))"
+        var k: String = ""
+        self.accessQueue.sync {
+            k = "\(unsafeBitCast(object, to: Int.self))"
+        }
         return k
     }
     
     public func value(_ key: AnyObject) -> T? {
+        var val: T?
         let k = self.key(by: key)
-        return self.props[k] ?? nil
+        self.accessQueue.sync {
+            val = self.props[k] ?? nil
+        }
+        return val
     }
     
     public func set(_ key: AnyObject, value: T) {
         let k = self.key(by: key)
-        self.props[k] = value
+        self.accessQueue.async(flags: .barrier) {
+            self.props[k] = value
+        }
     }
     
     public func remove(_ key: AnyObject) {
         let k = self.key(by: key)
-        self.props.removeValue(forKey: k)
+        self.accessQueue.async(flags: .barrier) {
+            self.props.removeValue(forKey: k)
+        }
     }
 }
