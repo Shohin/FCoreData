@@ -52,13 +52,20 @@ public extension FCDEntity {
     
     @discardableResult
     private static func _save(context: FManagedObjectContext) -> Bool {
-        do {
-            try context.save()
-            return true
-        } catch let error as NSError  {
-            print("[ERROR] Could not save \(error), \(error.userInfo)")
+        var r = false
+        context.performAndWait {
+            if context.hasChanges {
+                do {
+                    try context.save()
+                    r = true
+                } catch let error as NSError  {
+                    print("[ERROR] Could not save \(error), \(error.userInfo)")
+                }
+            } else {
+                r = true
+            }
         }
-        return false
+        return r
     }
     
     static var entityName: String {
@@ -84,29 +91,31 @@ public extension FCDEntity {
                             updateObject: Self,
                             predicate: NSPredicate?,
                             isReflectChanges: Bool) {
-        let entity = Self.entity(context: context)
-        let br = NSBatchUpdateRequest(entity: entity)
-        br.predicate = predicate
-        br.propertiesToUpdate = updateObject.attrValuesByName(context: context) as [AnyHashable : Any]
-        br.resultType = .updatedObjectIDsResultType
-        do {
-            guard let res: NSBatchUpdateResult = try context.execute(br) as? NSBatchUpdateResult else {
-                fatalError("Error on executing batch update request.")
-            }
-            guard let objIds = res.result as? [NSManagedObjectID] else {
-                fatalError("Error on retrieving batch update result.")
-            }
-            print("Result: \(objIds)")
-            if isReflectChanges {
-                for objId in objIds {
-                    let mo = context.object(with: objId)
-                    if !mo.isFault {
-                        context.refresh(mo, mergeChanges: true) //TODO: mergeChanges true or false
+        context.performAndWait {
+            let entity = Self.entity(context: context)
+            let br = NSBatchUpdateRequest(entity: entity)
+            br.predicate = predicate
+            br.propertiesToUpdate = updateObject.attrValuesByName(context: context) as [AnyHashable : Any]
+            br.resultType = .updatedObjectIDsResultType
+            do {
+                guard let res: NSBatchUpdateResult = try context.execute(br) as? NSBatchUpdateResult else {
+                    fatalError("Error on executing batch update request.")
+                }
+                guard let objIds = res.result as? [NSManagedObjectID] else {
+                    fatalError("Error on retrieving batch update result.")
+                }
+                print("Result: \(objIds)")
+                if isReflectChanges {
+                    for objId in objIds {
+                        let mo = context.object(with: objId)
+                        if !mo.isFault {
+                            context.refresh(mo, mergeChanges: true) //TODO: mergeChanges true or false
+                        }
                     }
                 }
+            } catch {
+                fatalError("Error on batch update. Reason: \(error)")
             }
-        } catch {
-            fatalError("Error on batch update. Reason: \(error)")
         }
     }
     
