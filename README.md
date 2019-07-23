@@ -2,10 +2,10 @@
 Forob Core Data
 
 * __Fully clean code Core Data.__
-* __ Works only on main thread. (thread safe and multi threading in plan)__
+* __Works only on main thread. (thread safe and multi threading in plan)__
 * __Creation and manipulation model from source code.__
 
-##__Classes(models):__
+## __Classes(models):__
 
 ```swift
 final class Student {
@@ -33,7 +33,7 @@ final class Group {
 
 ```
 
-##__Core Data usage:__
+## __Core Data usage:__
 
 ```swift
 extension Student: FCDEntity {
@@ -117,13 +117,13 @@ extension Group: FCDEntity {
 
 ```
 
-##__Creation:__
+## __Creation:__
 
 ```swift
 let dbm = FCoreDataManager(modelName: "test", migrationType: .restore)
 ```
 
-##__Core Data managed object model createion:__
+## __Core Data managed object model createion:__
 
 ```swift
 
@@ -136,7 +136,7 @@ let moc: FManagedObjectContext = dbm.managedObjectContext;
 
 ```
 
-##__Data insertion:__
+## __Data insertion:__
 
 ```swift
 let students1 = [Student(id: 1, name: "Student1"),
@@ -157,7 +157,7 @@ Group.insert(context: self.moc, items: groups)
 
 ```
 
-##__Data retrieving:__
+## __Data retrieving:__
 
 ```swift
 for item in Group.all(context: self.moc) {
@@ -171,7 +171,7 @@ for item in Group.all(context: self.moc) {
 
 ```
 
-##__Data retrieving options:__
+## __Data retrieving options:__
 
 ```swift
 
@@ -179,7 +179,7 @@ Group.all(context: self.moc, predicate: NSPredicate?, sortDescriptors: Array<NSS
 
 ```
 
-##__Data deletion options:__
+## __Data deletion options:__
 
 ```swift
 
