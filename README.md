@@ -123,7 +123,7 @@ extension Group: FCDEntity {
 let dbm = FCoreDataManager(modelName: "test", migrationType: .restore)
 ```
 
-## __Core Data managed object model createion:__
+## __Core Data managed object model creation:__
 
 ```swift
 
