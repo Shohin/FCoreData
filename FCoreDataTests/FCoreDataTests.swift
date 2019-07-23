@@ -349,6 +349,8 @@ class FCoreDataTests: XCTestCase {
                       Group(id: 3, name: "212-10", students: students3)]
         Group.insert(context: self.moc, items: groups)
         
+        Group.delete(context: self.moc, predicate: <#T##NSPredicate?#>)
+        
         for item in Group.all(context: self.moc) {
             print(item.id)
             print(item.name)
